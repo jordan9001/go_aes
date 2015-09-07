@@ -37,3 +37,11 @@ func SubCol(incol []byte) (outcol []byte) {
 	}
 	return outcol
 }
+
+func SubState(instate State) (outstate State) {
+	outstate = make([][]byte, 4)
+	for i := 0; i < len(instate); i++ {
+		outstate[i] = SubCol(instate[i])
+	}
+	return outstate
+}

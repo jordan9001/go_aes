@@ -16,8 +16,8 @@ var irr_poly byte = 0x1b
 
 /** Takes 1 column and "mixes it" by multiplying against the fixed mixing matrix
  */
-func MixColumns(inbytes []byte) []byte {
-	outbytes := make([]byte, 4)
+func MixColumns(inbytes []byte) (outbytes []byte) {
+	outbytes = make([]byte, 4)
 	for out_index := 0; out_index < len(fixed_matrix); out_index++ {
 		for i := 0; i < len(fixed_matrix[out_index]); i++ {
 			outbytes[out_index] = outbytes[out_index] ^ galois_mult(inbytes[i], fixed_matrix[out_index][i])
@@ -47,4 +47,10 @@ func galois_mult(in_b, fixed_b byte) byte {
 	return result
 }
 
-
+func MixState(instate State) (outstate State) {	
+	outstate = make([][]byte, 4)
+	for i := 0; i < len(instate); i++ {
+		outstate[i] = MixColumns(instate[i])
+	}
+	return outstate
+}
