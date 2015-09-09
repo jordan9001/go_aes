@@ -15,11 +15,13 @@ func EncryptBlock(block State, key [][]byte) State {
 	key = KeyExpansion(key)
 	
 	// initial round
+	_ = "breakpoint"
 	block = AddRoundKey(block, key[:4])
 	key = key[4:]
 	
 	// rounds
 	for i := 0; i < (rounds - 1); i++ {
+		_ = "breakpoint"
 		block = SubState(block) 
 		block = ShiftRows(block)
 		block = MixState(block)
