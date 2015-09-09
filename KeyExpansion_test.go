@@ -1,5 +1,5 @@
 
-package aes
+package go_aes
 
 import (
 	"testing"

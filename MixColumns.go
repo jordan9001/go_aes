@@ -1,5 +1,5 @@
 
-package aes
+package go_aes
 
 import (
 )
@@ -12,6 +12,13 @@ var fixed_matrix = [][]byte {
 	[]byte{0x03, 0x01, 0x01, 0x02},
 	}
 
+var inv_fixed_matrix = [][]byte {
+	[]byte{0x0e, 0x0b, 0x0d, 0x09},
+	[]byte{0x09, 0x0e, 0x0b, 0x0d},
+	[]byte{0x0d, 0x09, 0x0e, 0x0b},
+	[]byte{0x0b, 0x0d, 0x09, 0x0e},
+	}
+
 var irr_poly byte = 0x1b
 
 /** Takes 1 column and "mixes it" by multiplying against the fixed mixing matrix
@@ -21,6 +28,19 @@ func MixColumns(inbytes []byte) (outbytes []byte) {
 	for out_index := 0; out_index < len(fixed_matrix); out_index++ {
 		for i := 0; i < len(fixed_matrix[out_index]); i++ {
 			outbytes[out_index] = outbytes[out_index] ^ galois_mult(inbytes[i], fixed_matrix[out_index][i])
+		}
+	}
+	return outbytes
+}
+
+
+/** Takes 1 column and "unmixes it" by multiplying against the inverted fixed mixing matrix
+ */
+func InvMixColumns(inbytes []byte) (outbytes []byte) {
+	outbytes = make([]byte, 4)
+	for out_index := 0; out_index < len(inv_fixed_matrix); out_index++ {
+		for i := 0; i < len(inv_fixed_matrix[out_index]); i++ {
+			outbytes[out_index] = outbytes[out_index] ^ galois_mult(inbytes[i], inv_fixed_matrix[out_index][i])
 		}
 	}
 	return outbytes
@@ -51,6 +71,14 @@ func MixState(instate State) (outstate State) {
 	outstate = make([][]byte, 4)
 	for i := 0; i < len(instate); i++ {
 		outstate[i] = MixColumns(instate[i])
+	}
+	return outstate
+}
+
+func InvMixState(instate State) (outstate State) {	
+	outstate = make([][]byte, 4)
+	for i := 0; i < len(instate); i++ {
+		outstate[i] = InvMixColumns(instate[i])
 	}
 	return outstate
 }
